@@ -1,16 +1,14 @@
-import { Conversation } from '@/types/chat';
-import { Folder } from '@/types/folder';
-import { cleanConversationHistory } from '@/utils/app/clean';
 import { IconFileImport } from '@tabler/icons-react';
-import { useTranslation } from 'next-i18next';
 import { FC } from 'react';
+
+import { useTranslation } from 'next-i18next';
+
+import { SupportedExportFormats } from '@/types/export';
+
 import { SidebarButton } from '../Sidebar/SidebarButton';
 
 interface Props {
-  onImport: (data: {
-    conversations: Conversation[];
-    folders: Folder[];
-  }) => void;
+  onImport: (data: SupportedExportFormats) => void;
 }
 
 export const Import: FC<Props> = ({ onImport }) => {
@@ -30,19 +28,14 @@ export const Import: FC<Props> = ({ onImport }) => {
           const reader = new FileReader();
           reader.onload = (e) => {
             let json = JSON.parse(e.target?.result as string);
-
-            if (json && !json.folders) {
-              json = { history: cleanConversationHistory(json), folders: [] };
-            }
-
-            onImport({ conversations: json.history, folders: json.folders });
+            onImport(json);
           };
           reader.readAsText(file);
         }}
       />
 
       <SidebarButton
-        text={t('Import conversations')}
+        text={t('Import data')}
         icon={<IconFileImport size={18} />}
         onClick={() => {
           const importFile = document.querySelector(

@@ -1,8 +1,3 @@
-import { Conversation } from '@/types/chat';
-import { OpenAIModelID } from '@/types/openai';
-import { Prompt } from '@/types/prompt';
-import { DEFAULT_SYSTEM_PROMPT } from '@/utils/app/const';
-import { useTranslation } from 'next-i18next';
 import {
   FC,
   KeyboardEvent,
@@ -11,6 +6,14 @@ import {
   useRef,
   useState,
 } from 'react';
+
+import { useTranslation } from 'next-i18next';
+
+import { DEFAULT_SYSTEM_PROMPT } from '@/utils/app/const';
+
+import { Conversation } from '@/types/chat';
+import { Prompt } from '@/types/prompt';
+
 import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
 
@@ -43,8 +46,7 @@ export const SystemPrompt: FC<Props> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    const maxLength =
-      conversation.model.id === OpenAIModelID.GPT_3_5 ? 12000 : 24000;
+    const maxLength = conversation.model.maxLength;
 
     if (value.length > maxLength) {
       alert(
@@ -196,7 +198,7 @@ export const SystemPrompt: FC<Props> = ({
       </label>
       <textarea
         ref={textareaRef}
-        className="w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-3 text-neutral-900 focus:outline-none dark:border-neutral-600 dark:text-neutral-100"
+        className="w-full rounded-lg border border-neutral-200 bg-transparent px-4 py-3 text-neutral-900 dark:border-neutral-600 dark:text-neutral-100"
         style={{
           resize: 'none',
           bottom: `${textareaRef?.current?.scrollHeight}px`,
@@ -216,7 +218,7 @@ export const SystemPrompt: FC<Props> = ({
         onKeyDown={handleKeyDown}
       />
 
-      {showPromptList && prompts.length > 0 && (
+      {showPromptList && filteredPrompts.length > 0 && (
         <div>
           <PromptList
             activePromptIndex={activePromptIndex}
